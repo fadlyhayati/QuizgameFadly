@@ -9,6 +9,6 @@ COPY . /var/www/html/
 
 RUN chown -R www-data:www-data /var/www/html
 
-EXPOSE 80
+EXPOSE 8080
 
 CMD ["sh", "-c", "PORT=${PORT:-80}; sed -ri \"s/Listen [0-9]+/Listen ${PORT}/g\" /etc/apache2/ports.conf && sed -ri \"s/:[0-9]+>/:${PORT}>/g\" /etc/apache2/sites-available/000-default.conf && exec apache2-foreground"]
