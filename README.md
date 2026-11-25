@@ -10,6 +10,7 @@ Atur variabel lingkungan berikut untuk Apache/PHP sebelum menjalankan aplikasi:
 - `DB_USER`
 - `DB_PASSWORD` (boleh kosong jika konfigurasi MySQL lokal memang tanpa password)
 - `DB_NAME`
+- `DB_PORT` (opsional; default `3306`)
 
 Untuk membuat akun admin atau pembuat soal secara otomatis saat aplikasi menyiapkan tabel, atur pasangan variabel berikut. Kata sandi harus minimal 12 karakter.
 

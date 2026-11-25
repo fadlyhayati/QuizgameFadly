@@ -3,16 +3,17 @@
 $aksi = isset($_GET['action']) && is_string($_GET['action']) ? $_GET['action'] : '';
 
 if ($aksi === 'login') {
-    require_once __DIR__ . "/koneksi.php";
-    require_once __DIR__ . "/akun.php";
-
     if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
         header("Allow: POST");
         header("Location: ../navbar.html");
         exit();
     }
 
-    $email = strtolower(trim($_POST['email'] ?? ''));
+    require_once __DIR__ . "/koneksi.php";
+    require_once __DIR__ . "/akun.php";
+
+    $emailInput = $_POST['email'] ?? '';
+    $email = is_string($emailInput) ? strtolower(trim($emailInput)) : '';
     $password = is_string($_POST['password'] ?? null) ? $_POST['password'] : '';
 
     if (!siapkanTabelAkun($conn)) {
