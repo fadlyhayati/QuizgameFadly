@@ -1,0 +1,6 @@
+.env
+.env.*
+!.env.example
+Koneksi/config.local.php
+*.log
+*.bak

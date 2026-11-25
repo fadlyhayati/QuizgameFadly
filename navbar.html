@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="style.css?v=20261126-1">
+    
+    <title>Quiz Game</title>
+</head>
+<body>
+    <header class="site-header">
+        <nav class="navbar" aria-label="Navigasi utama">
+            <a class="nama" href="navbar.html">Quiz<span>Game</span></a>
+            <ul class="menu">
+                <li><a href="#beranda" class="active">Beranda</a></li>
+                <li><a href="#cara-main">Cara Bermain</a></li>
+                <li><a href="#kelompok">Kelompok</a></li>
+                <li><a class="register-button" id="registerButton" href="#daftar">Daftar Akun</a></li>
+                <li><a class="login-button" id="loginButton" href="#login">Login</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <main>
+        <section class="hero" id="beranda">
+            <div class="hero-content">
+                <p class="hero-eyebrow">Belajar, bermain, dan tantang temanmu</p>
+                <h1>Uji wawasanmu.<br><span>Raih skor tertinggi.</span></h1>
+                <p class="hero-description">
+                    Selamat datang di Quiz Game! Jawab soal menarik, kumpulkan poin,
+                    dan main bersama kelompokmu.
+                </p>
+                <div class="hero-actions">
+                    <a class="hero-button hero-button-primary" id="heroRegisterButton" href="#daftar">Mulai Bermain</a>
+                    <a class="hero-button hero-button-secondary" id="heroLoginButton" href="#login">Login</a>
+                </div>
+                <div class="hero-highlights">
+                    <span>✦ Beragam soal</span>
+                    <span>✦ Main berkelompok</span>
+                    <span>✦ Lihat hasil langsung</span>
+                </div>
+            </div>
+            <div class="hero-visual" aria-hidden="true">
+                <div class="quiz-card">
+                    <div class="quiz-card-top"><span>QUIZ TIME</span><span class="quiz-card-icon">✦</span></div>
+                    <div class="quiz-card-question">Seberapa luas wawasanmu?</div>
+                    <div class="quiz-card-option"><span>A</span> Siap menjawab!</div>
+                    <div class="quiz-card-option"><span>B</span> Ayo tantang teman</div>
+                    <div class="quiz-card-option quiz-card-option-selected"><span>C</span> Mulai kuis sekarang</div>
+                    <div class="quiz-card-progress"><span></span></div>
+                    <div class="quiz-card-footer"><span>01 / 10</span><strong>+100 poin</strong></div>
+                </div>
+                <div class="hero-badge">Main bareng, makin seru!</div>
+            </div>
+        </section>
+        <section class="landing-section how-to-section" id="cara-main">
+            <div class="landing-section-heading">
+                <p class="hero-eyebrow">Mulai dalam beberapa langkah</p>
+                <h2>Cara <span>bermain</span></h2>
+                <p>Jelajahi kampus, temukan pos soal, dan kumpulkan poin sebelum sesi berakhir.</p>
+            </div>
+            <div class="landing-steps">
+                <article><span>01</span><h3>Atur Avatar</h3><p>Pilih tampilan karakter dan nama panggilan agar teman mudah mengenalimu.</p></article>
+                <article><span>02</span><h3>Pilih Kelompok atau Solo</h3><p>Bermain gotong-royong bersama kelompok atau tantang dirimu sendiri.</p></article>
+                <article><span>03</span><h3>Jelajahi 7 Ruangan</h3><p>Masuki kelas, laboratorium, perpustakaan, aula, kantin, dan Mushola di satu gedung kampus.</p></article>
+                <article><span>04</span><h3>Kejar Skor</h3><p>Jawab setiap soal dengan tepat sebelum waktu soal dan sesi habis.</p></article>
+            </div>
+        </section>
+        <section class="landing-section group-section" id="kelompok">
+            <div class="group-copy">
+                <p class="hero-eyebrow">Belajar bersama, bersaing sehat</p>
+                <h2>Satu kelas.<br><span>Banyak cara untuk menang.</span></h2>
+                <p>Dalam Mode Gotong-Royong, satu jawaban benar membantu seluruh kelompok dan progres langsung dibagikan. Mode Solo menyimpan skor pribadimu. Setelah bermain, lihat klasemen kelas untuk membandingkan hasil kelompok dan individu.</p>
+                <div class="hero-actions">
+                    <a class="hero-button hero-button-primary" id="groupRegisterButton" href="#daftar">Daftar dan gabung</a>
+                    <a class="hero-button hero-button-secondary" id="groupLoginButton" href="#login">Login untuk bermain</a>
+                </div>
+            </div>
+            <div class="group-feature-card">
+                <span class="group-feature-icon">✦</span>
+                <h3>Skor kelas, semangat tim</h3>
+                <p>Kerjakan pos soal bersama, dukung kontribusi teman, dan raih posisi teratas di papan peringkat.</p>
+                <div class="group-feature-tags"><span>Gotong-royong</span><span>Mode Solo</span><span>Leaderboard</span></div>
+            </div>
+        </section>
+    </main>
+    <div class="login-modal" id="loginModal" hidden>
+        <div class="login-box">
+            <button class="close-button" type="button">&times;</button>
+            <h2>Form Login</h2>
+
+            <form class="login-form" action="Koneksi/auth.php?action=login" method="post">
+                <div class="form-group">
+                    <label for="email">Email</label>
+                    <input type="email" id="email" name="email" placeholder="Masukkan email" autocomplete="email" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="password">Password</label>
+                    <div class="password-container">
+                        <input type="password" id="password" name="password" placeholder="Masukkan password" autocomplete="current-password" required>
+                        <button class="toggle-password" type="button">&#128065;</button>
+                    </div>
+                </div>
+                <button class="submit-button" type="submit">Masuk</button>
+                <p class="form-switch">Belum punya akun? <button class="text-button" id="openRegisterFromLogin" type="button">Daftar di sini</button></p>
+                <p class="login-message" id="loginMessage" role="alert" hidden></p>
+            </form>
+        </div>
+    </div>
+
+    <div class="login-modal" id="registerModal" hidden>
+        <div class="login-box register-box">
+            <button class="close-button" type="button" aria-label="Tutup">&times;</button>
+            <h2>Daftar Akun</h2>
+            <form class="register-form" id="registerForm">
+                <div class="form-group">
+                    <label for="namaLengkap">Nama Lengkap</label>
+                    <input type="text" id="namaLengkap" name="nama_lengkap" autocomplete="name" maxlength="120" required>
+                </div>
+                <div class="form-group">
+                    <label for="emailDaftar">Email</label>
+                    <input type="email" id="emailDaftar" name="email" autocomplete="email" maxlength="191" required>
+                </div>
+                <div class="form-group">
+                    <label for="jenisKelamin">Jenis Kelamin</label>
+                    <select id="jenisKelamin" name="jenis_kelamin" required>
+                        <option value="">Pilih jenis kelamin</option>
+                        <option value="Laki-laki">Laki-laki</option>
+                        <option value="Perempuan">Perempuan</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="passwordDaftar">Password (minimal 8 karakter)</label>
+                    <input type="password" id="passwordDaftar" name="password" autocomplete="new-password" minlength="8" maxlength="72" required>
+                </div>
+                <div class="form-group">
+                    <label for="konfirmasiPassword">Konfirmasi Password</label>
+                    <input type="password" id="konfirmasiPassword" name="konfirmasi_password" autocomplete="new-password" minlength="8" maxlength="72" required>
+                </div>
+                <h3 class="address-heading">Informasi Alamat</h3>
+                <div class="form-group">
+                    <label for="negara">Negara</label>
+                    <select id="negara" name="negara" required>
+                        <option value="Indonesia" selected>Indonesia</option>
+                    </select>
+                </div>
+                <p class="address-api-message" id="countryApiMessage" role="status" hidden></p>
+
+                <div class="form-group">
+                    <label for="provinsi">Provinsi</label>
+                    <select id="provinsi" name="provinsi" required disabled>
+                        <option value="">Memuat provinsi...</option>
+                    </select>
+                    <input type="text" id="provinsiManual" maxlength="100" autocomplete="address-level1" hidden disabled>
+                </div>
+                <div class="form-group">
+                    <label for="kabupatenKota">Kabupaten / Kota</label>
+                    <select id="kabupatenKota" name="kabupaten_kota" required disabled>
+                        <option value="">Pilih provinsi terlebih dahulu</option>
+                    </select>
+                    <input type="text" id="kabupatenKotaManual" maxlength="100" autocomplete="address-level2" hidden disabled>
+                </div>
+                <div class="form-group">
+                    <label for="kecamatan">Kecamatan</label>
+                    <select id="kecamatan" name="kecamatan" required disabled>
+                        <option value="">Pilih kabupaten / kota terlebih dahulu</option>
+                    </select>
+                    <input type="text" id="kecamatanManual" maxlength="100" hidden disabled>
+                </div>
+                <div class="form-group">
+                    <label for="kelurahanDesa">Kelurahan / Desa</label>
+                    <select id="kelurahanDesa" name="kelurahan_desa" required disabled>
+                        <option value="">Pilih kecamatan terlebih dahulu</option>
+                    </select>
+                    <input type="text" id="kelurahanDesaManual" maxlength="100" autocomplete="address-level3" hidden disabled>
+                </div>
+                <p class="address-api-message" id="regionApiMessage" role="status" hidden></p>
+                <button class="text-button manual-address-button" id="useManualAddressButton" type="button">Isi alamat secara manual</button>
+
+                <button class="submit-button" type="submit">Daftar dan Masuk</button>
+                <p class="form-switch">Sudah punya akun? <button class="text-button" id="openLoginFromRegister" type="button">Masuk</button></p>
+                <p class="login-message" id="registerMessage" role="alert" aria-live="polite" hidden></p>
+            </form>
+        </div>
+    </div>
+    <script src="quiz-app.js?v=20261126-1"></script>
+</body>
+</html>
