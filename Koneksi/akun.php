@@ -1,5 +1,60 @@
 <?php
 
+function siapkanKolomGoogleAuth($conn)
+{
+    static $retryDuplikat = false;
+    try {
+        $kolomWajib = array(
+            'google_id' => "ALTER TABLE users ADD COLUMN google_id VARCHAR(191) NULL",
+            'auth_provider' => "ALTER TABLE users ADD COLUMN auth_provider VARCHAR(30) NOT NULL DEFAULT 'local'"
+        );
+
+        foreach ($kolomWajib as $namaKolom => $sqlTambah) {
+            $hasil = mysqli_query($conn, "SHOW COLUMNS FROM users LIKE '" . $namaKolom . "'");
+            if (!$hasil) {
+                return false;
+            }
+
+            $ada = mysqli_num_rows($hasil) > 0;
+            mysqli_free_result($hasil);
+            if (!$ada && !mysqli_query($conn, $sqlTambah)) {
+                return false;
+            }
+        }
+
+        $hasilIndex = mysqli_query(
+            $conn,
+            "SHOW INDEX FROM users WHERE Column_name = 'google_id' AND Non_unique = 0"
+        );
+        if (!$hasilIndex) {
+            return false;
+        }
+
+        $indexUnikAda = mysqli_num_rows($hasilIndex) > 0;
+        mysqli_free_result($hasilIndex);
+        if (!$indexUnikAda && !mysqli_query(
+            $conn,
+            "ALTER TABLE users ADD UNIQUE KEY uq_users_google_id (google_id)"
+        )) {
+            return false;
+        }
+
+        return true;
+    } catch (mysqli_sql_exception $exception) {
+        if (
+            in_array((int) $exception->getCode(), array(1060, 1061), true) &&
+            !$retryDuplikat
+        ) {
+            $retryDuplikat = true;
+            $hasilUlang = siapkanKolomGoogleAuth($conn);
+            $retryDuplikat = false;
+            return $hasilUlang;
+        }
+        error_log("Gagal menyiapkan kolom autentikasi Google: " . $exception->getMessage());
+        return false;
+    }
+}
+
 function siapkanTabelAkun($conn)
 {
     $sqlUsers = "CREATE TABLE IF NOT EXISTS users (
@@ -15,10 +70,13 @@ function siapkanTabelAkun($conn)
         kabupaten_kota VARCHAR(100) NULL,
         kecamatan VARCHAR(100) NULL,
         kelurahan_desa VARCHAR(100) NULL,
+        google_id VARCHAR(191) NULL,
+        auth_provider VARCHAR(30) NOT NULL DEFAULT 'local',
         created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
         updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
         PRIMARY KEY (id),
         UNIQUE KEY uq_users_email (email),
+        UNIQUE KEY uq_users_google_id (google_id),
         KEY idx_users_role (role),
         KEY idx_users_asal_daerah (asal_daerah)
     ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci";
@@ -39,6 +97,10 @@ function siapkanTabelAkun($conn)
 
     try {
         if (mysqli_query($conn, $sqlUsers) !== true) {
+            return false;
+        }
+
+        if (!siapkanKolomGoogleAuth($conn)) {
             return false;
         }
 

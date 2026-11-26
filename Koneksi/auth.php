@@ -1,5 +1,7 @@
 <?php
 
+require_once __DIR__ . "/google-oauth-common.php";
+
 $aksi = isset($_GET['action']) && is_string($_GET['action']) ? $_GET['action'] : '';
 
 if ($aksi === 'login') {
@@ -51,14 +53,7 @@ if ($aksi === 'login') {
         exit();
     }
 
-    session_set_cookie_params(array(
-        'lifetime' => 0,
-        'path' => '/',
-        'secure' => (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off'),
-        'httponly' => true,
-        'samesite' => 'Lax'
-    ));
-    session_start();
+    quizStartSession();
     session_regenerate_id(true);
     $_SESSION['akun_id'] = (int) $userId;
     $_SESSION['nama_lengkap'] = $namaLengkap;
@@ -86,7 +81,7 @@ if ($aksi === 'logout') {
         exit("Metode tidak diizinkan.");
     }
 
-    session_start();
+    quizStartSession();
     $_SESSION = array();
 
     if (ini_get("session.use_cookies")) {

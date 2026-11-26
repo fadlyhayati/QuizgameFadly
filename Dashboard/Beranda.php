@@ -36,6 +36,7 @@ function playerEscape($value)
 $userId = (int) $_SESSION['akun_id'];
 $namaLengkap = $_SESSION['nama_lengkap'] ?? 'Pemain';
 $csrf = playerEscape($_SESSION['csrf_token']);
+$lengkapiProfilGoogle = !empty($_SESSION['google_profile_incomplete']);
 
 $groupId = 0;
 $groupName = '';
@@ -161,7 +162,7 @@ $notices = array(
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="../style.css?v=20261126-1">
+    <link rel="stylesheet" href="../style.css?v=20261126-2">
     <title>Beranda Pemain | Quiz Game</title>
 </head>
 <body class="player-page">
@@ -285,5 +286,68 @@ $notices = array(
         <?php require __DIR__ . "/AvatarModal.php"; ?>
     </main>
     <script src="../avatar.js?v=20261126-2" defer></script>
+    <?php if ($lengkapiProfilGoogle): ?>
+        <div class="login-modal" id="googleProfileModal" role="dialog" aria-modal="true" aria-labelledby="googleProfileTitle">
+            <section class="login-box register-box">
+                <h2 id="googleProfileTitle">Lengkapi Profil</h2>
+                <p class="address-api-message">Lengkapi data jenis kelamin dan asal daerah agar informasi sebaran pemain tercatat dengan benar.</p>
+                <form class="register-form" id="googleProfileForm">
+                    <input type="hidden" name="csrf_token" value="<?= $csrf ?>">
+                    <div class="form-group">
+                        <label for="googleProfileGender">Jenis Kelamin</label>
+                        <select id="googleProfileGender" name="jenis_kelamin" required>
+                            <option value="">Pilih jenis kelamin</option>
+                            <option value="Laki-laki">Laki-laki</option>
+                            <option value="Perempuan">Perempuan</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="googleProfileCountry">Negara</label>
+                        <select id="googleProfileCountry" name="negara" required>
+                            <option value="Indonesia" selected>Indonesia</option>
+                            <option value="Malaysia">Malaysia</option>
+                            <option value="Singapura">Singapura</option>
+                            <option value="Brunei Darussalam">Brunei Darussalam</option>
+                            <option value="Timor-Leste">Timor-Leste</option>
+                            <option value="Lainnya">Lainnya</option>
+                        </select>
+                    </div>
+                    <p class="address-api-message" id="googleProfileRegionMessage" role="status" hidden></p>
+                    <div class="form-group">
+                        <label for="googleProfileProvince">Provinsi</label>
+                        <select id="googleProfileProvince" name="provinsi" required disabled>
+                            <option value="">Memuat provinsi...</option>
+                        </select>
+                        <input type="text" id="googleProfileProvinceManual" maxlength="100" hidden disabled>
+                    </div>
+                    <div class="form-group">
+                        <label for="googleProfileCity">Kabupaten / Kota</label>
+                        <select id="googleProfileCity" name="kabupaten_kota" required disabled>
+                            <option value="">Pilih provinsi terlebih dahulu</option>
+                        </select>
+                        <input type="text" id="googleProfileCityManual" maxlength="100" hidden disabled>
+                    </div>
+                    <div class="form-group">
+                        <label for="googleProfileDistrict">Kecamatan</label>
+                        <select id="googleProfileDistrict" name="kecamatan" required disabled>
+                            <option value="">Pilih kabupaten / kota terlebih dahulu</option>
+                        </select>
+                        <input type="text" id="googleProfileDistrictManual" maxlength="100" hidden disabled>
+                    </div>
+                    <div class="form-group">
+                        <label for="googleProfileVillage">Kelurahan / Desa</label>
+                        <select id="googleProfileVillage" name="kelurahan_desa" required disabled>
+                            <option value="">Pilih kecamatan terlebih dahulu</option>
+                        </select>
+                        <input type="text" id="googleProfileVillageManual" maxlength="100" hidden disabled>
+                    </div>
+                    <button class="text-button manual-address-button" id="googleProfileManualButton" type="button">Isi alamat secara manual</button>
+                    <button class="submit-button" type="submit">Simpan Profil</button>
+                    <p class="login-message" id="googleProfileMessage" role="alert" aria-live="polite" hidden></p>
+                </form>
+            </section>
+        </div>
+        <script src="../profile-completion.js?v=20261126-1" defer></script>
+    <?php endif; ?>
 </body>
 </html>

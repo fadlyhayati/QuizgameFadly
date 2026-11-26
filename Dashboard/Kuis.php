@@ -232,7 +232,7 @@ if ($worldJson === false) {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <meta name="theme-color" content="#10142b">
-    <link rel="stylesheet" href="../style.css?v=20261126-1">
+    <link rel="stylesheet" href="../style.css?v=20261126-2">
     <title>Arena Kuis | Quiz Game</title>
 </head>
 <body class="world-page">

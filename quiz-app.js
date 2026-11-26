@@ -20,20 +20,31 @@ var alamatWilayah = [
     { id: 'kelurahanDesa', manualId: 'kelurahanDesaManual', name: 'kelurahan_desa' }
 ];
 
+function perbaruiStatusScrollModal() {
+    document.body.classList.toggle(
+        'modal-open',
+        (modalLogin && !modalLogin.hidden) || (modalDaftar && !modalDaftar.hidden)
+    );
+}
+
 function bukaModalLogin() {
     modalLogin.hidden = false;
+    perbaruiStatusScrollModal();
 }
 
 function bukaModalDaftar() {
     modalDaftar.hidden = false;
+    perbaruiStatusScrollModal();
 }
 
 function tutupModalLogin() {
     modalLogin.hidden = true;
+    perbaruiStatusScrollModal();
 }
 
 function tutupModalDaftar() {
     modalDaftar.hidden = true;
+    perbaruiStatusScrollModal();
 }
 
 tombolLogin.forEach(function (tombol) {
@@ -471,5 +482,28 @@ if (parameterHalaman.has('register')) {
         ? 'Database Quiz Game belum siap. Import database/quiz_game.sql melalui phpMyAdmin.'
         : 'Pendaftaran gagal. Silakan coba lagi.';
     pesanDaftar.hidden = false;
+    window.history.replaceState({}, document.title, window.location.pathname);
+}
+
+if (parameterHalaman.has('google_error')) {
+    var modeGoogle = parameterHalaman.get('mode') === 'register' ? 'register' : 'login';
+    var pesanGoogle = {
+        config: 'Login Google belum dikonfigurasi di server. Silakan gunakan email dan password atau hubungi pengelola.',
+        no_account: 'Akun Google ini belum terdaftar. Pilih Daftar dengan Google untuk membuat akun baru.',
+        email_conflict: 'Email ini sudah terhubung ke akun Google lain. Silakan gunakan email Google yang sesuai.',
+        state: 'Sesi Google kedaluwarsa atau tidak valid. Silakan coba lagi.',
+        cancelled: 'Proses autentikasi Google dibatalkan.',
+        failed: 'Autentikasi Google belum berhasil. Silakan coba lagi.'
+    };
+    var elemenPesanGoogle = document.querySelector(
+        modeGoogle === 'register' ? '#googleRegisterMessage' : '#googleLoginMessage'
+    );
+    if (modeGoogle === 'register') {
+        bukaModalDaftar();
+    } else {
+        bukaModalLogin();
+    }
+    elemenPesanGoogle.textContent = pesanGoogle[parameterHalaman.get('google_error')] || pesanGoogle.failed;
+    elemenPesanGoogle.hidden = false;
     window.history.replaceState({}, document.title, window.location.pathname);
 }

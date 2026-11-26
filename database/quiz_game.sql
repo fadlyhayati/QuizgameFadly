@@ -19,11 +19,14 @@ CREATE TABLE IF NOT EXISTS users (
     kelurahan_desa VARCHAR(100) NULL,
     nama_panggilan VARCHAR(30) NULL,
     avatar_config TEXT NULL,
+    google_id VARCHAR(191) NULL,
+    auth_provider VARCHAR(30) NOT NULL DEFAULT 'local',
     created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
         ON UPDATE CURRENT_TIMESTAMP,
     PRIMARY KEY (id),
     UNIQUE KEY uq_users_email (email),
+    UNIQUE KEY uq_users_google_id (google_id),
     KEY idx_users_role (role),
     KEY idx_users_asal_daerah (asal_daerah)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;

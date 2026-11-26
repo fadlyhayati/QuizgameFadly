@@ -302,14 +302,16 @@ function apiDaftarAkun()
         ));
     }
 
-    session_set_cookie_params(array(
-        'lifetime' => 0,
-        'path' => '/',
-        'secure' => (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off'),
-        'httponly' => true,
-        'samesite' => 'Lax'
-    ));
-    session_start();
+    require_once __DIR__ . '/google-oauth-common.php';
+    try {
+        quizStartSession();
+    } catch (Throwable $exception) {
+        error_log('Sesi pendaftaran tidak dapat dimulai: ' . $exception->getMessage());
+        apiKirimRespons(500, array(
+            "success" => false,
+            "message" => "Sesi pendaftaran belum dapat dimulai. Silakan coba lagi."
+        ));
+    }
     session_regenerate_id(true);
     $_SESSION['akun_id'] = (int) $akunId;
     $_SESSION['nama_lengkap'] = $namaLengkap;
@@ -325,6 +327,119 @@ function apiDaftarAkun()
     ));
 }
 
+function apiLengkapiProfilGoogle()
+{
+    require_once __DIR__ . '/google-oauth-common.php';
+    try {
+        quizStartSession();
+    } catch (Throwable $exception) {
+        error_log('Sesi pelengkapan profil tidak dapat dimulai: ' . $exception->getMessage());
+        apiKirimRespons(500, array("success" => false, "message" => "Sesi tidak dapat dimulai. Muat ulang halaman."));
+    }
+
+    if (
+        empty($_SESSION['akun_id']) ||
+        ($_SESSION['role'] ?? '') !== 'user' ||
+        empty($_SESSION['google_profile_incomplete'])
+    ) {
+        apiKirimRespons(403, array("success" => false, "message" => "Sesi pelengkapan profil tidak valid."));
+    }
+    if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+        header('Allow: POST');
+        apiKirimRespons(405, array("success" => false, "message" => "Endpoint hanya menerima metode POST."));
+    }
+
+    $data = json_decode(file_get_contents('php://input'), true);
+    if (!is_array($data)) {
+        apiKirimRespons(400, array("success" => false, "message" => "Format data tidak valid."));
+    }
+
+    $csrf = apiAmbilTeks($data, 'csrf_token');
+    if (
+        empty($_SESSION['csrf_token']) ||
+        !is_string($_SESSION['csrf_token']) ||
+        !hash_equals($_SESSION['csrf_token'], $csrf)
+    ) {
+        apiKirimRespons(403, array("success" => false, "message" => "Token keamanan tidak valid. Muat ulang halaman."));
+    }
+
+    $jenisKelamin = apiAmbilTeks($data, 'jenis_kelamin');
+    $negara = apiAmbilTeks($data, 'negara');
+    $provinsi = apiAmbilTeks($data, 'provinsi');
+    $kabupatenKota = apiAmbilTeks($data, 'kabupaten_kota');
+    $kecamatan = apiAmbilTeks($data, 'kecamatan');
+    $kelurahanDesa = apiAmbilTeks($data, 'kelurahan_desa');
+    $asalDaerah = $kabupatenKota !== '' ? $kabupatenKota : $provinsi;
+
+    if (!in_array($jenisKelamin, array('Laki-laki', 'Perempuan'), true)) {
+        apiKirimRespons(422, array("success" => false, "message" => "Pilih jenis kelamin yang valid."));
+    }
+
+    $batasPanjang = array(
+        'Negara' => array($negara, 100),
+        'Provinsi' => array($provinsi, 100),
+        'Kabupaten / Kota' => array($kabupatenKota, 100),
+        'Kecamatan' => array($kecamatan, 100),
+        'Kelurahan / Desa' => array($kelurahanDesa, 100),
+        'Asal Daerah' => array($asalDaerah, 150)
+    );
+    foreach ($batasPanjang as $label => $nilaiDanBatas) {
+        $panjang = function_exists('mb_strlen')
+            ? mb_strlen($nilaiDanBatas[0], 'UTF-8')
+            : strlen($nilaiDanBatas[0]);
+        if ($nilaiDanBatas[0] === '' || $panjang > $nilaiDanBatas[1]) {
+            apiKirimRespons(422, array("success" => false, "message" => $label . " wajib diisi dan harus valid."));
+        }
+    }
+
+    require_once __DIR__ . '/koneksi.php';
+    require_once __DIR__ . '/akun.php';
+    if (!siapkanTabelAkun($conn)) {
+        error_log('Gagal menyiapkan tabel saat pelengkapan profil Google: ' . mysqli_error($conn));
+        apiKirimRespons(500, array("success" => false, "message" => "Database profil belum siap."));
+    }
+
+    try {
+        $stmt = mysqli_prepare(
+            $conn,
+            'UPDATE users
+             SET jenis_kelamin = ?, negara = ?, provinsi = ?, kabupaten_kota = ?,
+                 kecamatan = ?, kelurahan_desa = ?, asal_daerah = ?
+             WHERE id = ? AND role = \'user\''
+        );
+        if (!$stmt) {
+            throw new mysqli_sql_exception(mysqli_error($conn));
+        }
+        $userId = (int) $_SESSION['akun_id'];
+        mysqli_stmt_bind_param(
+            $stmt,
+            'sssssssi',
+            $jenisKelamin,
+            $negara,
+            $provinsi,
+            $kabupatenKota,
+            $kecamatan,
+            $kelurahanDesa,
+            $asalDaerah,
+            $userId
+        );
+        if (!mysqli_stmt_execute($stmt)) {
+            throw new mysqli_sql_exception(mysqli_stmt_error($stmt));
+        }
+        mysqli_stmt_close($stmt);
+    } catch (mysqli_sql_exception $exception) {
+        error_log('Gagal menyimpan profil Google: ' . $exception->getMessage());
+        apiKirimRespons(500, array("success" => false, "message" => "Profil belum dapat disimpan. Coba lagi."));
+    }
+
+    unset($_SESSION['google_profile_incomplete']);
+    apiKirimRespons(200, array(
+        "success" => true,
+        "message" => "Profil berhasil dilengkapi.",
+        "redirect" => "Dashboard/Beranda.php"
+    ));
+}
+
 $aksi = isset($_GET['action']) && is_string($_GET['action']) ? $_GET['action'] : '';
 
 if ($aksi === 'wilayah') {
@@ -333,6 +448,10 @@ if ($aksi === 'wilayah') {
 
 if ($aksi === 'daftar') {
     apiDaftarAkun();
+}
+
+if ($aksi === 'lengkapi-profil-google') {
+    apiLengkapiProfilGoogle();
 }
 
 apiKirimRespons(404, array(

@@ -443,7 +443,7 @@ $logNext = min($logPages, $logPage + 1);
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="../style.css?v=20261126-1">
+    <link rel="stylesheet" href="../style.css?v=20261126-2">
     <title>Dashboard Admin | Quiz Game</title>
 </head>
 <body class="admin-page">

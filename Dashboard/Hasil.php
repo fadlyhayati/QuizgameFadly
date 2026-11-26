@@ -89,7 +89,7 @@ if ($historyMode) {
     <head>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <link rel="stylesheet" href="../style.css?v=20261126-1">
+        <link rel="stylesheet" href="../style.css?v=20261126-2">
         <title>Riwayat Hasil | Quiz Game</title>
     </head>
     <body class="player-page">
@@ -482,7 +482,7 @@ $resultNotice = isset($_GET['notice']) && is_string($_GET['notice']) ? $_GET['no
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="../style.css?v=20261126-1">
+    <link rel="stylesheet" href="../style.css?v=20261126-2">
     <title>Hasil Kuis | Quiz Game</title>
 </head>
 <body class="player-page">
